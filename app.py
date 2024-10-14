@@ -67,15 +67,34 @@ if st.button("Display a New Symbol"):
 if "current_symbol" in st.session_state:
     st.text(f"IPA Symbol: {st.session_state.current_symbol}")
 
-voicing = st.radio("Voicing", ['voiceless', 'voiced'])
-place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'])
-manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'])
-oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'])
-centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'])
+# Organize the options horizontally using st.columns
+col1, col2, col3, col4, col5 = st.columns(5)
 
+# Voicing
+with col1:
+    voicing = st.radio("Voicing", ['voiceless', 'voiced'])
+
+# Place
+with col2:
+    place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'])
+
+# Manner
+with col3:
+    manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'])
+
+# Oro-nasal
+with col4:
+    oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'])
+
+# Centrality
+with col5:
+    centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'])
+
+# Submit button
 if st.button("Submit"):
     result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
     st.text(result)
 
+# Show the total score
 if st.button("See the total score"):
     st.text(f"Final Score: {st.session_state.correct_count}/{st.session_state.attempts}")
