@@ -58,7 +58,7 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
             .format(correct_data['Voicing'], correct_data['Place'], correct_data['Manner'], correct_data['Oro-nasal'], correct_data['Centrality'])
 
 # Main interface with Streamlit
-st.title("IPA Practice App")
+st.title("🐇IPA Practice App")
 
 if st.button("Display a New Symbol"):
     symbol, _ = select_random_symbol()
