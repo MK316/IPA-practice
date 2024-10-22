@@ -83,7 +83,7 @@ if "current_symbol" in st.session_state:
         st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()
         st.session_state.submit_pressed = True
 
-if st.button("Show Score"):
+if st.button("Continue"):
     st.write(f"Final Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
     if st.session_state.submit_pressed:
         st.session_state.new_symbol = True  # Refresh the session for a new start
