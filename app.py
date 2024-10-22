@@ -60,33 +60,33 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
 # Main interface with Streamlit
 st.title("🐇 IPA Practice App")
 
-# Create a session state for a new symbol
-if 'new_symbol' not in st.session_state or st.button("Start Quiz"):
+# Start quiz or display new symbol
+if 'current_symbol' not in st.session_state or st.button("Start Quiz"):
     symbol, _ = select_random_symbol()
     st.session_state.current_symbol = symbol
-    st.session_state.new_symbol = False
 
-if "current_symbol" in st.session_state:
-    st.text(f"IPA Symbol: {st.session_state.current_symbol}")
+st.text(f"IPA Symbol: {st.session_state.current_symbol}")
 
 # User interaction for symbol characteristics using columns
 col1, col2, col3, col4, col5 = st.columns(5)
 with col1:
-    voicing = st.radio("Voicing", ['voiceless', 'voiced'])
+    voicing = st.radio("Voicing", ['voiceless', 'voiced'], key="voicing")
 with col2:
-    place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'])
+    place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key="place")
 with col3:
-    manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'])
+    manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key="manner")
 with col4:
-    oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'])
+    oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key="oronasal")
 with col5:
-    centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'])
+    centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key="centrality")
 
-# Submit button and display results
+# Submit button
 if st.button("Submit"):
     result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-    st.session_state.new_symbol = True  # Allow fetching a new symbol for the next round
     st.write(result)
+    # Refresh the symbol immediately after submission
+    new_symbol, _ = select_random_symbol()
+    st.session_state.current_symbol = new_symbol
 
 # Show the total score
 if st.button("See the total score"):
