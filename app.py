@@ -80,7 +80,7 @@ if "current_symbol" in st.session_state:
     with cols[0]:
         submit_pressed = st.button("Submit")
     with cols[1]:
-        continue_pressed = st.button("Continue")
+        continue_pressed = st.button("Show score & Continue")
 
     # Process the submission and update
     if submit_pressed:
