@@ -76,7 +76,7 @@ if "current_symbol" in st.session_state:
         centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
     # Create a single row for both buttons with minimal space between them
-    col_button1, col_button2 = st.columns([1, 1])
+    col_button1, col_button2 = st.columns([2, 2, 6])
     with col_button1:
         submit_pressed = st.button("Submit")
     with col_button2:
