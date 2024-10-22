@@ -75,11 +75,11 @@ if "current_symbol" in st.session_state:
     with col5:
         centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
-    # Create a single row for both buttons with minimal space between them
-    col_button1, col_button2 = st.columns([2, 2, 6])
-    with col_button1:
+    # Place buttons next to each other without any gap
+    cols = st.columns([0.15, 0.15, 9.7])  # Adjust the width of the first two columns to bring buttons closer
+    with cols[0]:
         submit_pressed = st.button("Submit")
-    with col_button2:
+    with cols[1]:
         continue_pressed = st.button("Continue")
 
     # Process the submission and update
@@ -91,7 +91,7 @@ if "current_symbol" in st.session_state:
         else:
             st.error("Incorrect!")
         st.session_state.attempts += 1
-        st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()  # Update to new symbol immediately
+        st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()
 
     # Show score when 'Continue' is pressed
     if continue_pressed:
