@@ -30,6 +30,7 @@ ipa_data = {
 }
 
 
+
 def select_random_symbol():
     """Select a random IPA symbol"""
     symbol = random.choice(list(ipa_data.keys()))
@@ -64,24 +65,23 @@ if "current_symbol" in st.session_state:
     # Using columns to organize the options
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        voicing = st.radio("Voicing", ['voiceless', 'voiced'], key=st.session_state.attempts)
+        voicing = st.radio("Voicing", ['voiceless', 'voiced'], key=f"voicing_{st.session_state.attempts}")
     with col2:
-        place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key=st.session_state.attempts)
+        place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key=f"place_{st.session_state.attempts}")
     with col3:
-        manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key=st.session_state.attempts)
+        manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key=f"manner_{st.session_state.attempts}")
     with col4:
-        oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key=st.session_state.attempts)
+        oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key=f"oronasal_{st.session_state.attempts}")
     with col5:
-        centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=st.session_state.attempts)
+        centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
     if st.button("Submit"):
         result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-        st.write(result)
         st.session_state.attempts += 1
+        st.write(result)
         st.session_state.current_symbol, _ = select_random_symbol()  # Update to new symbol immediately
 
 if st.button("Show Score"):
     if "attempts" in st.session_state:
         st.write(f"Final Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
         del st.session_state.current_symbol  # Optionally reset the quiz
-
