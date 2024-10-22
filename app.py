@@ -30,7 +30,6 @@ ipa_data = {
 }
 
 
-
 def select_random_symbol():
     """Select a random IPA symbol"""
     symbol = random.choice(list(ipa_data.keys()))
@@ -45,43 +44,54 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
                correct_data['Oro-nasal'] == user_oronasal and
                correct_data['Centrality'] == user_centrality)
     
-    if correct:
-        st.session_state.correct_count += 1
-        return "Correct!"
-    else:
-        return f"Incorrect! Correct values are: Voicing: {correct_data['Voicing']}, Place: {correct_data['Place']}, Manner: {correct_data['Manner']}, Oro-nasal: {correct_data['Oro-nasal']}, Centrality: {correct_data['Centrality']}"
+    return correct, correct_data
 
 # Main interface with Streamlit
 st.title("🐇 IPA Practice App")
 
-if st.button("Start Quiz"):
+if 'new_symbol' not in st.session_state:
+    st.session_state.new_symbol = True
+
+if st.button("Start Quiz") or st.session_state.new_symbol:
     st.session_state.correct_count = 0
     st.session_state.attempts = 0
-    st.session_state.current_symbol, _ = select_random_symbol()
+    st.session_state.new_symbol = False
+    symbol, symbol_data = select_random_symbol()
+    st.session_state.current_symbol = symbol
+    st.session_state.current_symbol_data = symbol_data
 
 if "current_symbol" in st.session_state:
-    st.text(f"IPA Symbol: {st.session_state.current_symbol}")
+    st.write(f"IPA Symbol: {st.session_state.current_symbol}")
     
     # Using columns to organize the options
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        voicing = st.radio("Voicing", ['voiceless', 'voiced'], key=f"voicing_{st.session_state.attempts}")
+        voicing = st.radio("Voicing", ['voiceless', 'voiced'], key="voicing")
     with col2:
-        place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key=f"place_{st.session_state.attempts}")
+        place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key="place")
     with col3:
-        manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key=f"manner_{st.session_state.attempts}")
+        manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key="manner")
     with col4:
-        oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key=f"oronasal_{st.session_state.attempts}")
+        oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key="oronasal")
     with col5:
-        centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
+        centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key="centrality")
 
     if st.button("Submit"):
-        result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
+        correct, correct_data = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
         st.session_state.attempts += 1
-        st.write(result)
-        st.session_state.current_symbol, _ = select_random_symbol()  # Update to new symbol immediately
+        if correct:
+            st.session_state.correct_count += 1
+            result_text = "Correct!"
+        else:
+            result_text = f"Incorrect! Correct values are: Voicing: {correct_data['Voicing']}, Place: {correct_data['Place']}, Manner: {correct_data['Manner']}, Oro-nasal: {correct_data['Oro-nasal']}, Centrality: {correct_data['Centrality']}"
+        st.write(result_text)
+        st.session_state.new_symbol = True  # Trigger a new symbol on the next cycle
+        # Update to new symbol immediately for continuous quiz experience
+        new_symbol, new_symbol_data = select_random_symbol()
+        st.session_state.current_symbol = new_symbol
+        st.session_state.current_symbol_data = new_symbol_data
 
 if st.button("Show Score"):
     if "attempts" in st.session_state:
         st.write(f"Final Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
-        del st.session_state.current_symbol  # Optionally reset the quiz
+        st.session_state.new_symbol = True  # Allow restarting the quiz
