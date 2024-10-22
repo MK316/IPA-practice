@@ -30,19 +30,14 @@ ipa_data = {
 }
 
 
-# Initialize session state for keeping track of correct answers and attempts
-if "correct_count" not in st.session_state:
-    st.session_state.correct_count = 0
-if "attempts" not in st.session_state:
-    st.session_state.attempts = 0
 
 def select_random_symbol():
-    """ Select a random IPA symbol """
+    """Select a random IPA symbol"""
     symbol = random.choice(list(ipa_data.keys()))
     return symbol, ipa_data[symbol]
 
 def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_oronasal, user_centrality):
-    """ Check user's selections against the actual IPA symbol properties """
+    """Check user's selections against the actual IPA symbol properties"""
     correct_data = ipa_data[ipa_symbol]
     correct = (correct_data['Voicing'] == user_voicing and
                correct_data['Place'] == user_place and
@@ -50,7 +45,6 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
                correct_data['Oro-nasal'] == user_oronasal and
                correct_data['Centrality'] == user_centrality)
     
-    st.session_state.attempts += 1
     if correct:
         st.session_state.correct_count += 1
         return "Correct!"
@@ -60,34 +54,31 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
 # Main interface with Streamlit
 st.title("🐇 IPA Practice App")
 
-# Start quiz or display new symbol
-if 'current_symbol' not in st.session_state or st.button("Start Quiz"):
+if st.button("Start Quiz"):
+    st.session_state.correct_count = 0
+    st.session_state.attempts = 0
     symbol, _ = select_random_symbol()
     st.session_state.current_symbol = symbol
 
-st.text(f"IPA Symbol: {st.session_state.current_symbol}")
-
-# User interaction for symbol characteristics using columns
-col1, col2, col3, col4, col5 = st.columns(5)
-with col1:
+if "current_symbol" in st.session_state:
+    st.text(f"IPA Symbol: {st.session_state.current_symbol}")
     voicing = st.radio("Voicing", ['voiceless', 'voiced'], key="voicing")
-with col2:
     place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key="place")
-with col3:
     manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key="manner")
-with col4:
     oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key="oronasal")
-with col5:
     centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key="centrality")
 
-# Submit button
-if st.button("Submit"):
-    result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-    st.write(result)
-    # Refresh the symbol immediately after submission
-    new_symbol, _ = select_random_symbol()
-    st.session_state.current_symbol = new_symbol
+    if st.button("Submit"):
+        result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
+        st.session_state.attempts += 1
+        st.write(result)
+        # Refresh the symbol immediately after submission
+        new_symbol, _ = select_random_symbol()
+        st.session_state.current_symbol = new_symbol  # Update to new symbol for continuous quiz
 
-# Show the total score
-if st.button("See the total score"):
-    st.write(f"Final Score: {st.session_state.correct_count}/{st.session_state.attempts}")
+if st.button("Show Score"):
+    if "attempts" in st.session_state:
+        st.write(f"Final Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
+        # Reset after showing score
+        del st.session_state.current_symbol
+
