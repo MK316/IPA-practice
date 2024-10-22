@@ -29,6 +29,7 @@ ipa_data = {
     'w': {'Voicing': 'voiced', 'Place': 'labio-velar', 'Manner': 'approximant','Oro-nasal': '(oral)','Centrality':'(central)'}
 }
 
+
 def select_random_symbol():
     """Select a random IPA symbol"""
     symbol = random.choice(list(ipa_data.keys()))
@@ -69,19 +70,24 @@ if "current_symbol" in st.session_state:
     with col5:
         centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
-    submit_col, continue_col = st.columns([1, 1])
-    with submit_col:
-        if st.button("Submit"):
-            correct, _ = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-            if correct:
-                st.success("Correct!")
-                st.session_state.correct_count += 1
-            else:
-                st.error("Incorrect!")
-            st.session_state.attempts += 1
-            st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()
+    # Place buttons next to each other in the same column
+    button_col, _ = st.columns([1, 4])  # Adjust the ratio as needed to control the space between buttons
+    with button_col:
+        submit_pressed = st.button("Submit")
+        continue_pressed = st.button("Continue")
 
-    with continue_col:
-        if st.button("Continue"):
-            st.write(f"Current Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
+    # Process the submission and update
+    if submit_pressed:
+        correct, _ = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
+        if correct:
+            st.success("Correct!")
+            st.session_state.correct_count += 1
+        else:
+            st.error("Incorrect!")
+        st.session_state.attempts += 1
+        st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()  # Update to new symbol immediately
+
+    # Show score when 'Continue' is pressed
+    if continue_pressed:
+        st.write(f"Current Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
 
