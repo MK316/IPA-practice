@@ -74,7 +74,7 @@ if "current_symbol" in st.session_state:
     col_button = st.columns([1, 0.1])  # Adjust the second column to be very narrow, effectively unused
     with col_button[0]:
         submit_pressed = st.button("Submit: Show the answer")
-        continue_pressed = st.button("Continue)
+        continue_pressed = st.button("Continue")
 
     # Process the submission and update
     if submit_pressed:
