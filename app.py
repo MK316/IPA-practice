@@ -76,7 +76,7 @@ if "current_symbol" in st.session_state:
     with col5:
         centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
-    submit_col, continue_col = st.columns([1, 1])  # Columns for Submit and Continue buttons
+    submit_col, continue_col = st.columns([1.5, 1.5,7])  # Columns for Submit and Continue buttons
     with submit_col:
         if st.button("Submit"):
             correct, _ = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
