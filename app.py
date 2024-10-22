@@ -29,6 +29,7 @@ ipa_data = {
     'w': {'Voicing': 'voiced', 'Place': 'labio-velar', 'Manner': 'approximant','Oro-nasal': '(oral)','Centrality':'(central)'}
 }
 
+
 # Initialize session state for keeping track of correct answers and attempts
 if "correct_count" not in st.session_state:
     st.session_state.correct_count = 0
@@ -54,17 +55,13 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
         st.session_state.correct_count += 1
         return "Correct!"
     else:
-        return "Incorrect! Correct values are: \n- Voicing: {}, \n- Place: {}, \n- Manner: {}, \n- Oro-nasal: {}, \n- Centrality: {}"\
-            .format(correct_data['Voicing'], correct_data['Place'], correct_data['Manner'], correct_data['Oro-nasal'], correct_data['Centrality'])
+        return f"Incorrect! Correct values are: Voicing: {correct_data['Voicing']}, Place: {correct_data['Place']}, Manner: {correct_data['Manner']}, Oro-nasal: {correct_data['Oro-nasal']}, Centrality: {correct_data['Centrality']}"
 
 # Main interface with Streamlit
-st.title("🐇IPA Practice App")
+st.title("🐇 IPA Practice App")
 
 # Create a session state for a new symbol
-if 'new_symbol' not in st.session_state:
-    st.session_state.new_symbol = True
-
-if st.session_state.new_symbol or st.button("Start Quiz"):
+if 'new_symbol' not in st.session_state or st.button("Start Quiz"):
     symbol, _ = select_random_symbol()
     st.session_state.current_symbol = symbol
     st.session_state.new_symbol = False
@@ -72,20 +69,25 @@ if st.session_state.new_symbol or st.button("Start Quiz"):
 if "current_symbol" in st.session_state:
     st.text(f"IPA Symbol: {st.session_state.current_symbol}")
 
-# User interaction for symbol characteristics
-voicing = st.radio("Voicing", ['voiceless', 'voiced'])
-place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'])
-manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'])
-oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'])
-centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'])
+# User interaction for symbol characteristics using columns
+col1, col2, col3, col4, col5 = st.columns(5)
+with col1:
+    voicing = st.radio("Voicing", ['voiceless', 'voiced'])
+with col2:
+    place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'])
+with col3:
+    manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'])
+with col4:
+    oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'])
+with col5:
+    centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'])
 
-# Submit button
+# Submit button and display results
 if st.button("Submit"):
     result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-    st.text(result)
     st.session_state.new_symbol = True  # Allow fetching a new symbol for the next round
+    st.write(result)
 
 # Show the total score
 if st.button("See the total score"):
-    st.text(f"Final Score: {st.session_state.correct_count}/{st.session_state.attempts}")
-
+    st.write(f"Final Score: {st.session_state.correct_count}/{st.session_state.attempts}")
