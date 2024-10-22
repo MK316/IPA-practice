@@ -47,7 +47,7 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
     return correct, correct_data
 
 # Main interface with Streamlit
-st.title("👀 IPA Practice App")
+st.title("💧 IPA Practice App")
 
 # Textbox for user name input, always available
 user_name = st.text_input("Enter your name:", value=st.session_state.user_name if 'user_name' in st.session_state else "")
