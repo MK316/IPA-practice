@@ -30,7 +30,6 @@ ipa_data = {
 }
 
 
-
 def select_random_symbol():
     """Select a random IPA symbol"""
     symbol = random.choice(list(ipa_data.keys()))
@@ -71,11 +70,10 @@ if "current_symbol" in st.session_state:
     with col5:
         centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
-    # Place buttons next to each other in the same row
-    submit_col, continue_col = st.columns(2)  # Use two columns for placing buttons side by side
-    with submit_col:
+    # Place buttons next to each other using a narrow column setup
+    col_button = st.columns([1, 0.1])  # Adjust the second column to be very narrow, effectively unused
+    with col_button[0]:
         submit_pressed = st.button("Submit")
-    with continue_col:
         continue_pressed = st.button("Continue")
 
     # Process the submission and update
