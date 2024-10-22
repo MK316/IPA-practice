@@ -50,7 +50,12 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
 # Main interface with Streamlit
 st.title("🐇 IPA Practice App")
 
-if 'new_symbol' not in st.session_state or st.button("Start Quiz"):
+# Textbox for user name input, always available
+user_name = st.text_input("Enter your name:", value=st.session_state.user_name if 'user_name' in st.session_state else "")
+
+# Start quiz button
+if st.button("Start Quiz"):
+    st.session_state.user_name = user_name
     st.session_state.correct_count = 0
     st.session_state.attempts = 0
     st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()
@@ -71,24 +76,21 @@ if "current_symbol" in st.session_state:
     with col5:
         centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
-    # Place buttons next to each other without any gap
-    col_button = st.columns([2, 2, 6])  # Adjust the layout to have two small columns for buttons and a larger space after
-    with col_button[0]:
-        submit_pressed = st.button("Submit")
-    with col_button[1]:
-        continue_pressed = st.button("Continue")
+    submit_col, continue_col = st.columns([1, 1])  # Columns for Submit and Continue buttons
+    with submit_col:
+        if st.button("Submit"):
+            correct, _ = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
+            if correct:
+                st.success("Correct!")
+                st.session_state.correct_count += 1
+            else:
+                st.error("Incorrect!")
+            st.session_state.attempts += 1
+            st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()  # Update to new symbol immediately
 
-    # Process the submission and update
-    if submit_pressed:
-        correct, _ = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-        if correct:
-            st.success("Correct!")
-            st.session_state.correct_count += 1
-        else:
-            st.error("Incorrect!")
-        st.session_state.attempts += 1
-        st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()  # Update to new symbol immediately
-
-    # Show score when 'Continue' is pressed
-    if continue_pressed:
-        st.write(f"{st.session_state.user_name if 'user_name' in st.session_state else 'User'} score: {st.session_state.correct_count} out of {st.session_state.attempts}")
+    with continue_col:
+        if st.button("Continue"):
+            if st.session_state.user_name:
+                st.write(f"{st.session_state.user_name} score: {st.session_state.correct_count} out of {st.session_state.attempts}")
+            else:
+                st.write("Please enter your name above to view your score.")
