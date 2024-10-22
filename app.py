@@ -63,7 +63,7 @@ if "current_symbol" in st.session_state:
     st.write(f"IPA Symbol: {st.session_state.current_symbol}")
     
     # Using columns to organize the options
-    col1, col2, col3, col4, col5 = st.columns([1.7, 2.5, 2.5, 1.3, 2])
+    col1, col2, col3, col4, col5 = st.columns([1.7, 2.5, 2.3, 1.5, 2])
     with col1:
         voicing = st.radio("Voicing", ['voiceless', 'voiced'], key=f"voicing_{st.session_state.attempts}")
     with col2:
