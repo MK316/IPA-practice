@@ -30,6 +30,7 @@ ipa_data = {
 }
 
 
+
 def select_random_symbol():
     """Select a random IPA symbol"""
     symbol = random.choice(list(ipa_data.keys()))
@@ -49,16 +50,11 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
 # Main interface with Streamlit
 st.title("🐇 IPA Practice App")
 
-if 'new_symbol' not in st.session_state:
-    st.session_state.new_symbol = True
-
-if st.button("Start Quiz") or st.session_state.new_symbol:
+if 'new_symbol' not in st.session_state or st.button("Start Quiz"):
     st.session_state.correct_count = 0
     st.session_state.attempts = 0
-    st.session_state.new_symbol = False
-    symbol, symbol_data = select_random_symbol()
-    st.session_state.current_symbol = symbol
-    st.session_state.current_symbol_data = symbol_data
+    st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()
+    st.session_state.submit_pressed = False
 
 if "current_symbol" in st.session_state:
     st.write(f"IPA Symbol: {st.session_state.current_symbol}")
@@ -66,32 +62,29 @@ if "current_symbol" in st.session_state:
     # Using columns to organize the options
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        voicing = st.radio("Voicing", ['voiceless', 'voiced'], key="voicing")
+        voicing = st.radio("Voicing", ['voiceless', 'voiced'], key=f"voicing_{st.session_state.attempts}")
     with col2:
-        place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key="place")
+        place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key=f"place_{st.session_state.attempts}")
     with col3:
-        manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key="manner")
+        manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key=f"manner_{st.session_state.attempts}")
     with col4:
-        oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key="oronasal")
+        oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key=f"oronasal_{st.session_state.attempts}")
     with col5:
-        centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key="centrality")
+        centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
     if st.button("Submit"):
-        correct, correct_data = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-        st.session_state.attempts += 1
+        correct, _ = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
         if correct:
+            st.success("Correct!")
             st.session_state.correct_count += 1
-            result_text = "Correct!"
         else:
-            result_text = f"Incorrect! Correct values are: Voicing: {correct_data['Voicing']}, Place: {correct_data['Place']}, Manner: {correct_data['Manner']}, Oro-nasal: {correct_data['Oro-nasal']}, Centrality: {correct_data['Centrality']}"
-        st.write(result_text)
-        st.session_state.new_symbol = True  # Trigger a new symbol on the next cycle
-        # Update to new symbol immediately for continuous quiz experience
-        new_symbol, new_symbol_data = select_random_symbol()
-        st.session_state.current_symbol = new_symbol
-        st.session_state.current_symbol_data = new_symbol_data
+            st.error("Incorrect!")
+        st.session_state.attempts += 1
+        st.session_state.current_symbol, st.session_state.current_data = select_random_symbol()
+        st.session_state.submit_pressed = True
 
 if st.button("Show Score"):
-    if "attempts" in st.session_state:
-        st.write(f"Final Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
-        st.session_state.new_symbol = True  # Allow restarting the quiz
+    st.write(f"Final Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
+    if st.session_state.submit_pressed:
+        st.session_state.new_symbol = True  # Refresh the session for a new start
+        st.session_state.submit_pressed = False
