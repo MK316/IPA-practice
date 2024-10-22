@@ -76,7 +76,7 @@ if "current_symbol" in st.session_state:
         centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=f"centrality_{st.session_state.attempts}")
 
     # Place buttons next to each other without any gap
-    cols = st.columns([2, 2, 6])  # Adjust the width of the first two columns to bring buttons closer
+    cols = st.columns([2, 3, 5])  # Adjust the width of the first two columns to bring buttons closer
     with cols[0]:
         submit_pressed = st.button("Submit")
     with cols[1]:
