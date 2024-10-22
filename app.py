@@ -30,7 +30,6 @@ ipa_data = {
 }
 
 
-
 def select_random_symbol():
     """Select a random IPA symbol"""
     symbol = random.choice(list(ipa_data.keys()))
@@ -57,28 +56,32 @@ st.title("🐇 IPA Practice App")
 if st.button("Start Quiz"):
     st.session_state.correct_count = 0
     st.session_state.attempts = 0
-    symbol, _ = select_random_symbol()
-    st.session_state.current_symbol = symbol
+    st.session_state.current_symbol, _ = select_random_symbol()
 
 if "current_symbol" in st.session_state:
     st.text(f"IPA Symbol: {st.session_state.current_symbol}")
-    voicing = st.radio("Voicing", ['voiceless', 'voiced'], key="voicing")
-    place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key="place")
-    manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key="manner")
-    oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key="oronasal")
-    centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key="centrality")
+    
+    # Using columns to organize the options
+    col1, col2, col3, col4, col5 = st.columns(5)
+    with col1:
+        voicing = st.radio("Voicing", ['voiceless', 'voiced'], key=st.session_state.attempts)
+    with col2:
+        place = st.radio("Place", ['bilabial', 'labio-dental', 'labio-velar', 'dental', 'alveolar', 'palato-alveolar', 'palatal', 'velar', 'glottal'], key=st.session_state.attempts)
+    with col3:
+        manner = st.radio("Manner", ['stop', 'fricative', 'affricate', 'approximant'], key=st.session_state.attempts)
+    with col4:
+        oronasal = st.radio("Oro-nasal", ['(oral)', 'nasal'], key=st.session_state.attempts)
+    with col5:
+        centrality = st.radio("Centrality", ['(central)', 'lateral', '(not applicable)'], key=st.session_state.attempts)
 
     if st.button("Submit"):
         result = validate_selections(st.session_state.current_symbol, voicing, place, manner, oronasal, centrality)
-        st.session_state.attempts += 1
         st.write(result)
-        # Refresh the symbol immediately after submission
-        new_symbol, _ = select_random_symbol()
-        st.session_state.current_symbol = new_symbol  # Update to new symbol for continuous quiz
+        st.session_state.attempts += 1
+        st.session_state.current_symbol, _ = select_random_symbol()  # Update to new symbol immediately
 
 if st.button("Show Score"):
     if "attempts" in st.session_state:
         st.write(f"Final Score: {st.session_state.correct_count} out of {st.session_state.attempts}")
-        # Reset after showing score
-        del st.session_state.current_symbol
+        del st.session_state.current_symbol  # Optionally reset the quiz
 
