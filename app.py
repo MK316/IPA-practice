@@ -48,7 +48,7 @@ def validate_selections(ipa_symbol, user_voicing, user_place, user_manner, user_
 
 # Main interface with Streamlit
 st.title("💧 IPA Practice App")
-st.info("For the centrality of a sound, mark 'Not applicable' when the air goes through the nose.")
+
 # Textbox for user name input, always available
 user_name = st.text_input("Enter your name:", value=st.session_state.user_name if 'user_name' in st.session_state else "")
 
@@ -62,6 +62,7 @@ if st.button("Start Quiz"):
 if "current_symbol" in st.session_state:
     st.write(f"IPA Symbol: {st.session_state.current_symbol}")
     st.markdown("📌 Note: Liquids and glides are approximants.")
+    st.info("For the centrality of a sound, mark 'Not applicable' when the air goes through the nose.")
     # Using columns to organize the options
     col1, col2, col3, col4, col5 = st.columns([1.7, 2.3, 2.2, 1.5, 2.3])
     with col1:
